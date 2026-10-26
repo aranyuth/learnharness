@@ -1,0 +1,17 @@
+[package]
+name = "learnharness-desktop"
+version = "0.2.0"
+description = "LearnHarness 2.0 Native Socratic Desktop App"
+authors = ["LearnHarness Authors"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2.2", features = [] }
+
+[dependencies]
+tauri = { version = "2.2", features = [] }
+learnharness-core = { path = "../crates/learnharness-core" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.43", features = ["sync", "macros", "rt-multi-thread"] }
+tracing = "0.1"

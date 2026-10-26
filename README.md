@@ -59,6 +59,15 @@ All three platforms support in-app updates.
 - **External services.** Models run through your configured providers. Model requests send the context needed for the task; web research and dictation also contact external services. Local storage does not mean offline processing.
 - **Inspectable behavior.** System prompts are visible and editable. The app is open source under the AGPL-3.0 license.
 
+## Antigravity (AGY) Bridge Integration
+
+You can connect LearnHarness to a local **Google Antigravity (AGY) Bridge** running in RAM (shared concurrently with Hermes and other AI clients) at `http://127.0.0.1:8000/v1` with zero external API fees.
+
+- See full architectural and configuration guide: **[AGY_BRIDGE_GUIDE.md](AGY_BRIDGE_GUIDE.md)**
+- Check bridge status: `scripts\check-agy-bridge.bat`
+- Launch bridge in RAM: `scripts\start-agy-bridge.bat`
+
+
 ## Development and support
 
 ```bash

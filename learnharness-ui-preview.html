@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnHarness 2.0 — Interface Design Showcase & Live Interactive Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans Thai"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+            },
+            duo: {
+              green: '#58cc02',
+              greenDark: '#46a302',
+              red: '#ea2b2b',
+              redDark: '#c21e1e',
+              blue: '#1cb0f6',
+              yellow: '#ffc800',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 3D Pushable Duolingo Button */
+    .btn-duo-3d {
+      box-shadow: 0 4px 0 #46a302;
+      transition: all 0.08s ease-in-out;
+    }
+    .btn-duo-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #46a302;
+    }
+    .btn-card-3d {
+      box-shadow: 0 3px 0 #334155;
+      transition: all 0.1s ease;
+    }
+    .btn-card-3d:hover {
+      border-color: #60a5fa;
+    }
+    .btn-card-3d:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #334155;
+    }
+    .btn-card-selected {
+      border-color: #3b82f6 !important;
+      background-color: rgba(59, 130, 246, 0.12) !important;
+      box-shadow: 0 3px 0 #2563eb !important;
+    }
+    /* Pulse glow */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .active-node-glow {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-[#090d16] text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP APP BAR -->
+  <header class="border-b border-white/10 bg-[#0f172a]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">LearnHarness 2.0</span>
+          <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Socratic Engine</span>
+        </div>
+      </div>
+
+      <!-- Archetype Switcher Tabs -->
+      <nav class="flex p-1 rounded-xl bg-slate-900/90 border border-white/10" id="archetype-tabs">
+        <button onclick="switchTab('hybrid')" id="tab-btn-hybrid" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm">
+          ⭐ 1. Hybrid Socratic (แนะนำ)
+        </button>
+        <button onclick="switchTab('duolingo')" id="tab-btn-duolingo" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          🎮 2. Duolingo Road
+        </button>
+        <button onclick="switchTab('brilliant')" id="tab-btn-brilliant" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          💡 3. Brilliant.org Studio
+        </button>
+        <button onclick="switchTab('skilltree')" id="tab-btn-skilltree" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          🌳 4. RPG Skill Tree
+        </button>
+        <button onclick="switchTab('realshots')" id="tab-btn-realshots" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all text-emerald-400 hover:text-emerald-300">
+          📸 รูปแคปของจริง (Screenshots)
+        </button>
+      </nav>
+
+      <div class="hidden md:flex items-center gap-4 text-xs font-medium text-slate-400">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-white/5">
+          <span class="text-amber-400 font-bold">🔥 7 วัน</span> Streak
+        </div>
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-white/5">
+          <span class="text-emerald-400 font-bold">⚡ 480</span> KGLite XP
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEW CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+
+    <!-- TAB 1: HYBRID SOCRATIC QUEST (RECOMMENDED) -->
+    <div id="view-hybrid" class="block space-y-6">
+      <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-start gap-4">
+        <div class="text-2xl mt-0.5">🏆</div>
+        <div>
+          <h2 class="font-bold text-white text-base">สถาปัตยกรรมแนะนำ: The Socratic Quest (Hybrid Masterpiece)</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            ผสาน 3 พลังเข้าด้วยกัน: <b>ซ้าย (Roadmap ด่านการเรียน)</b> + <b>กลาง (Card ถาม-ตอบกระตุ้นคิดสไตล์ Brilliant)</b> + <b>ขวา (ผัง KGLite Knowledge Graph ที่สว่างเรืองแสงเมื่อผู้เรียนพิสูจน์ได้)</b>
+          </p>
+        </div>
+      </div>
+
+      <!-- 3-Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Mini Winding Path / Unit Index (3 cols) -->
+        <div class="lg:col-span-3 bg-slate-900/60 border border-white/10 rounded-2xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-between">
+              <span>แผนผังบทเรียน (DAG Path)</span>
+              <span class="text-blue-400 text-[11px]">3 / 8 สำเร็จ</span>
+            </div>
+            
+            <div class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-700">
+              <!-- Node 1: Completed -->
+              <div class="relative flex items-center gap-3">
+                <div class="absolute -left-6 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-slate-900 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-slate-950 font-bold" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-200">1. นิยามแรงและการเคลื่อนที่</div>
+                  <div class="text-[11px] text-emerald-400">Mastered (KGLite: n_force)</div>
+                </div>
+              </div>
+
+              <!-- Node 2: Completed -->
+              <div class="relative flex items-center gap-3">
+                <div class="absolute -left-6 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-slate-900 flex items-center justify-center">
+                  <svg class="w-2.5 h-2.5 text-slate-950 font-bold" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-200">2. แรงดึงกลับของสปริง (Hooke's Law)</div>
+                  <div class="text-[11px] text-emerald-400">Mastered (KGLite: n_hooke)</div>
+                </div>
+              </div>
+
+              <!-- Node 3: Current Active (Pulsing) -->
+              <div class="relative flex items-center gap-3 bg-blue-500/10 p-2.5 rounded-xl border border-blue-500/30">
+                <div class="absolute -left-6 w-4 h-4 rounded-full bg-blue-500 ring-4 ring-slate-900 animate-pulse"></div>
+                <div>
+                  <div class="text-xs font-bold text-blue-300">3. ลูกตุ้มอย่างง่าย (Simple Pendulum)</div>
+                  <div class="text-[11px] text-blue-400 font-medium">กำลังเรียนรู้ (Socratic Probe)</div>
+                </div>
+              </div>
+
+              <!-- Node 4: Locked -->
+              <div class="relative flex items-center gap-3 opacity-40">
+                <div class="absolute -left-6 w-4 h-4 rounded-full bg-slate-700 ring-4 ring-slate-900"></div>
+                <div>
+                  <div class="text-xs font-medium text-slate-400">4. การอนุรักษ์พลังงานกล</div>
+                  <div class="text-[11px] text-slate-500">🔒 ปลดล็อกเมื่อผ่านขั้นที่ 3</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 p-3 rounded-xl bg-slate-800/40 border border-white/5 text-[11px] text-slate-400">
+            💡 <b>โสเครติสแนะ:</b> "อย่าท่องจำสูตร ให้จินตนาการถึงแรงที่ดึงวัตถุกลับสู่จุดสมดุลเสมอ"
+          </div>
+        </div>
+
+        <!-- Center Column: Active Socratic Problem Card (6 cols) -->
+        <div class="lg:col-span-6 bg-slate-900/90 border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+          <div>
+            <!-- Step Breadcrumb & Stage Tag -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold tracking-wider text-blue-400 uppercase">ขั้นตอนที่ 3: สังเกตและทำนายผล (Prediction)</span>
+              <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">Floor/Ceiling Probe</span>
+            </div>
+
+            <!-- Big Question Headline -->
+            <h1 class="text-xl sm:text-2xl font-bold text-white leading-snug tracking-tight">
+              หากเรานำลูกตุ้มนี้ไปแกว่งบน <span class="text-amber-400 underline decoration-amber-400/40">ดวงจันทร์</span> ซึ่งมีแรงโน้มถ่วงเพียง 1/6 เท่าของโลก คาบการแกว่ง (เวลาต่อนัด) จะเป็นอย่างไร?
+            </h1>
+
+            <p class="text-slate-400 text-xs sm:text-sm mt-3 leading-relaxed">
+              ลองใช้สัญชาตญาณทำนายผลก่อนดูเฉลย — เมื่อแรงดึงกลับลดลง ลูกตุ้มจะเคลื่อนที่เร็วขึ้นหรือช้าลง?
+            </p>
+
+            <!-- Interactive Choice Cards -->
+            <div class="mt-6 space-y-3" id="hybrid-options">
+              <button onclick="selectHybridOption(1, false)" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/60 btn-card-3d flex items-center justify-between group">
+                <div class="flex items-center gap-3">
+                  <span class="w-7 h-7 rounded-lg bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">1</span>
+                  <span class="text-sm font-semibold text-slate-200">แกว่งเร็วขึ้น (คาบเวลาสั้นลง)</span>
+                </div>
+              </button>
+
+              <button onclick="selectHybridOption(2, true)" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/60 btn-card-3d flex items-center justify-between group">
+                <div class="flex items-center gap-3">
+                  <span class="w-7 h-7 rounded-lg bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">2</span>
+                  <span class="text-sm font-semibold text-slate-200">แกว่งช้าลง (คาบเวลายาวนานขึ้น)</span>
+                </div>
+              </button>
+
+              <button onclick="selectHybridOption(3, false)" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/60 btn-card-3d flex items-center justify-between group">
+                <div class="flex items-center gap-3">
+                  <span class="w-7 h-7 rounded-lg bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">3</span>
+                  <span class="text-sm font-semibold text-slate-200">แกว่งเท่าเดิม เพราะมวลของลูกตุ้มไม่ได้เปลี่ยน</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- Feedback Drawer (Hidden by default, slides up on answer) -->
+            <div id="hybrid-feedback" class="mt-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/40 hidden">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span>ยอดเยี่ยมมาก! คุณเข้าใจกลไกฟิสิกส์แล้ว</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                เนื่องจากแรงโน้มถ่วง $g$ ทำหน้าที่เป็นแรงดึงกลับสู่จุดศูนย์กลาง เมื่อ $g$ ลดลง ลูกตุ้มจึงถูกดึงกลับอย่างเอื่อยๆ คาบเวลา $T = 2\pi\sqrt{L/g}$ จึงยาวขึ้นประมาณ 2.45 เท่า!
+              </p>
+              <div class="mt-3 flex items-center justify-end">
+                <button onclick="nextHybridStep()" class="px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-emerald-500/20">
+                  ปลดล็อกข้อพิสูจน์ถัดไป (Enter) →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-slate-500">
+            <span>กดปุ่ม <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">1</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">2</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">3</kbd> บนคีย์บอร์ดได้ทันที</span>
+            <span>LearnHarness Engine v2.0</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Live KGLite Graph & Epistemic Ledger (3 cols) -->
+        <div class="lg:col-span-3 bg-slate-900/60 border border-white/10 rounded-2xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+              <span>KGLite Epistemic Graph</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+
+            <!-- Mini Canvas Graph Representation -->
+            <div class="w-full h-44 rounded-xl bg-slate-950 border border-white/5 relative overflow-hidden flex items-center justify-center" id="mini-graph-box">
+              <svg class="w-full h-full" viewBox="0 0 200 140">
+                <!-- Edges -->
+                <line x1="40" y1="40" x2="100" y2="70" stroke="#334155" stroke-width="2"/>
+                <line x1="40" y1="100" x2="100" y2="70" stroke="#334155" stroke-width="2"/>
+                <line x1="100" y1="70" x2="160" y2="70" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="4,4"/>
+
+                <!-- Nodes -->
+                <!-- Node A -->
+                <circle cx="40" cy="40" r="12" fill="#10b981"/>
+                <text x="40" y="44" fill="#022c22" font-size="8" font-weight="bold" text-anchor="middle">n_g</text>
+
+                <!-- Node B -->
+                <circle cx="40" cy="100" r="12" fill="#10b981"/>
+                <text x="40" y="104" fill="#022c22" font-size="8" font-weight="bold" text-anchor="middle">n_len</text>
+
+                <!-- Implication Node -->
+                <rect x="90" y="60" width="20" height="20" rx="4" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+                <text x="100" y="73" fill="#60a5fa" font-size="7" font-weight="bold" text-anchor="middle">arg_1</text>
+
+                <!-- Target Node (Pulsing) -->
+                <circle cx="160" cy="70" r="14" fill="#3b82f6" class="active-node-glow"/>
+                <text x="160" y="74" fill="#ffffff" font-size="7" font-weight="bold" text-anchor="middle">n_period</text>
+              </svg>
+            </div>
+
+            <!-- Epistemic Ledger (Propositions) -->
+            <div class="mt-4 space-y-2">
+              <div class="text-[11px] font-bold text-slate-400">Propositions ที่พิสูจน์แล้ว:</div>
+              <div class="text-[11px] p-2 rounded bg-slate-800/70 border border-white/5 text-slate-300">
+                ✅ <code class="text-emerald-400">n_g</code>: แรงโน้มถ่วงทำหน้าที่เป็น restoring force
+              </div>
+              <div class="text-[11px] p-2 rounded bg-slate-800/70 border border-white/5 text-slate-300">
+                ✅ <code class="text-emerald-400">n_len</code>: ความยาวเชือกส่งผลโดยตรงต่อระยะทางแกว่ง
+              </div>
+              <div id="target-prop-badge" class="text-[11px] p-2 rounded bg-blue-500/10 border border-blue-500/30 text-blue-300">
+                ⏳ <code class="text-blue-400">n_period</code>: คาบเวลาผกผันกับรากที่สองของ $g$
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-white/5 text-[10px] text-slate-500 text-center">
+            Embedded KGLite Engine · Zero Latency
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TAB 2: DUOLINGO GAMIFIED ROAD -->
+    <div id="view-duolingo" class="hidden space-y-6">
+      <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-4">
+        <div class="text-2xl mt-0.5">🎮</div>
+        <div>
+          <h2 class="font-bold text-white text-base">Archetype A: Duolingo Gamified Road (สนุก ปลดล็อกด่าน ดึงดูดสูง)</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            จุดเด่นคือ <b>เส้นทางคดเคี้ยวรูปงู (Winding Road)</b>, <b>ปุ่ม 3 มิตินูนที่กดแล้วยุบ</b>, <b>หัวใจพลังงาน (Hearts)</b> และ <b>เสียงตอบรับ Audio Chimes</b>
+          </p>
+        </div>
+      </div>
+
+      <!-- Duolingo Road Demonstration Canvas -->
+      <div class="max-w-md mx-auto bg-slate-900 border border-white/10 rounded-3xl p-6 shadow-2xl relative">
+        <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">❤️</span>
+            <span class="font-bold text-red-400 text-sm">5 ชีวิต</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">💎</span>
+            <span class="font-bold text-blue-400 text-sm">340 อัญมณี</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🔥</span>
+            <span class="font-bold text-amber-400 text-sm">12 วัน</span>
+          </div>
+        </div>
+
+        <!-- The Winding Path of Level Buttons -->
+        <div class="flex flex-col items-center space-y-8 py-4 relative">
+          
+          <!-- Level 1 (Completed) -->
+          <div class="flex flex-col items-center">
+            <div class="w-16 h-16 rounded-full bg-duo-green flex items-center justify-center text-white text-2xl font-bold btn-duo-3d cursor-pointer">
+              ⭐
+            </div>
+            <span class="text-xs font-bold text-slate-300 mt-2">ด่าน 1: การเคลื่อนที่</span>
+          </div>
+
+          <!-- Level 2 (Completed) - Shift Right -->
+          <div class="flex flex-col items-center translate-x-12">
+            <div class="w-16 h-16 rounded-full bg-duo-green flex items-center justify-center text-white text-2xl font-bold btn-duo-3d cursor-pointer">
+              ⭐
+            </div>
+            <span class="text-xs font-bold text-slate-300 mt-2">ด่าน 2: แรงสปริง</span>
+          </div>
+
+          <!-- Level 3 (Current Active - Mascot Talking) - Shift Left -->
+          <div class="flex flex-col items-center -translate-x-10 relative">
+            <!-- Mascot Bubble -->
+            <div class="absolute -top-12 -right-36 bg-slate-800 text-xs px-3 py-1.5 rounded-xl border border-white/10 shadow-lg text-slate-200 after:content-[''] after:absolute after:top-1/2 after:-left-2 after:-translate-y-1/2 after:border-8 after:border-transparent after:border-r-slate-800">
+              พร้อมลุยลูกตุ้มไหม! 🦉
+            </div>
+
+            <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-white text-3xl font-bold cursor-pointer ring-8 ring-blue-500/20 animate-bounce" style="box-shadow: 0 5px 0 #1d4ed8;">
+              ▶
+            </div>
+            <span class="text-xs font-bold text-blue-400 mt-2">ด่าน 3: ลูกตุ้มโสเครติส</span>
+          </div>
+
+          <!-- Level 4 (Locked) -->
+          <div class="flex flex-col items-center translate-x-8 opacity-40">
+            <div class="w-14 h-14 rounded-full bg-slate-700 flex items-center justify-center text-slate-400 text-xl font-bold cursor-not-allowed">
+              🔒
+            </div>
+            <span class="text-xs font-medium text-slate-500 mt-2">ด่าน 4: คลื่นกล</span>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-white/10 text-center">
+          <button onclick="playDuoSound(true)" class="w-full py-3 rounded-2xl bg-duo-green hover:bg-emerald-500 text-slate-950 font-extrabold text-sm btn-duo-3d">
+            ทดสอบเสียงกริ๊งเฉลยถูก (Audio Chime) 🔔
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TAB 3: BRILLIANT.ORG STUDIO -->
+    <div id="view-brilliant" class="hidden space-y-6">
+      <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
+        <div class="text-2xl mt-0.5">💡</div>
+        <div>
+          <h2 class="font-bold text-white text-base">Archetype B: Brilliant.org First-Principles Studio (มินิมอล มีระดับ วิเคราะห์ลึก)</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            จุดเด่นคือ <b>Interactive Visual Widgets</b> ที่ให้ผู้เรียนปรับเลื่อนค่า (Sliders) เพื่อดูผลลัพธ์เชิงฟิสิกส์/คณิตศาสตร์แบบเรียลไทม์ และการนำเสนอแบบ <b>Card Deck</b> ทีละแผ่น
+          </p>
+        </div>
+      </div>
+
+      <!-- Brilliant Interactive Simulator Card -->
+      <div class="max-w-2xl mx-auto bg-slate-900 border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Interactive Physics Simulator</div>
+        <h3 class="text-lg font-bold text-white">สำรวจ: ความยาวเชือก (L) และแรงโน้มถ่วง (g) ส่งผลต่อคาบอย่างไร?</h3>
+
+        <!-- Interactive Canvas Pendulum -->
+        <div class="my-6 w-full h-56 rounded-xl bg-slate-950 border border-white/5 flex flex-col items-center justify-center relative overflow-hidden">
+          <canvas id="pendulumCanvas" width="400" height="220" class="w-full h-full"></canvas>
+          <div class="absolute bottom-2 left-3 text-[11px] text-slate-400" id="pendulum-info">
+            คาบเวลาปัจจุบัน: <span class="text-amber-400 font-bold" id="period-display">2.01 วินาที</span>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="space-y-4 bg-slate-800/40 p-4 rounded-xl border border-white/5">
+          <div>
+            <div class="flex justify-between text-xs font-semibold text-slate-300 mb-1">
+              <span>ความยาวเชือก (L): <span id="len-val" class="text-blue-400 font-bold">1.0</span> เมตร</span>
+              <span class="text-slate-500">0.2m - 3.0m</span>
+            </div>
+            <input type="range" id="len-slider" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updatePendulum()" class="w-full accent-blue-500 cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-semibold text-slate-300 mb-1">
+              <span>แรงโน้มถ่วง (g): <span id="g-val" class="text-amber-400 font-bold">9.8</span> m/s² (โลก)</span>
+              <span class="text-slate-500">1.6 (ดวงจันทร์) - 24.8 (พฤหัส)</span>
+            </div>
+            <input type="range" id="g-slider" min="1.6" max="24.8" step="0.2" value="9.8" oninput="updatePendulum()" class="w-full accent-amber-500 cursor-pointer">
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between">
+          <span class="text-xs text-slate-400">สูตรคำนวณจริง: $T = 2\pi\sqrt{L/g}$</span>
+          <button class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-white/10 transition-colors">
+            บันทึกการสังเกตลง KGLite →
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TAB 4: RPG SKILL TREE -->
+    <div id="view-skilltree" class="hidden space-y-6">
+      <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-start gap-4">
+        <div class="text-2xl mt-0.5">🌳</div>
+        <div>
+          <h2 class="font-bold text-white text-base">Archetype C: RPG Skill Tree (ผังต้นไม้สกิลแบบ React Flow)</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            จุดเด่นคือ <b>โครงข่ายความรู้ขนาดใหญ่แบบ RPG</b> เช่นเดียวกับ <code>SkilLet</code> หรือ <code>Human Skill Tree</code> ที่ใช้ <code>@xyflow/react</code> ลาก ย่อ ขยาย และโหนดจะเรืองแสงตามระดับความเข้าใจ
+          </p>
+        </div>
+      </div>
+
+      <!-- React Flow Simulation Board -->
+      <div class="w-full h-96 rounded-2xl bg-slate-950 border border-white/10 relative overflow-hidden p-6 flex items-center justify-center">
+        <!-- Grid pattern background -->
+        <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-40"></div>
+
+        <div class="relative z-10 flex items-center gap-16">
+          <!-- Root Node -->
+          <div class="p-4 rounded-2xl bg-slate-900 border-2 border-emerald-500 shadow-xl shadow-emerald-500/20 flex flex-col items-center text-center w-40">
+            <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mb-2">✓</div>
+            <div class="text-xs font-bold text-white">คณิตศาสตร์พื้นฐาน</div>
+            <div class="text-[10px] text-emerald-400 mt-1">Level 10 (Mastered)</div>
+          </div>
+
+          <!-- Branch Lines -->
+          <div class="w-12 h-0.5 bg-gradient-to-r from-emerald-500 to-blue-500"></div>
+
+          <!-- Middle Nodes Stack -->
+          <div class="flex flex-col gap-8">
+            <div class="p-4 rounded-2xl bg-slate-900 border-2 border-blue-500 shadow-xl shadow-blue-500/20 flex flex-col items-center text-center w-44 animate-pulse">
+              <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm mb-2">⚡</div>
+              <div class="text-xs font-bold text-white">กลศาสตร์และแรง</div>
+              <div class="text-[10px] text-blue-400 mt-1">กำลังฝึกฝน (In Progress)</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 opacity-50 flex flex-col items-center text-center w-44">
+              <div class="w-10 h-10 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center font-bold text-sm mb-2">🔒</div>
+              <div class="text-xs font-bold text-slate-400">พลศาสตร์ของไหล</div>
+              <div class="text-[10px] text-slate-500 mt-1">ต้องการกลศาสตร์ Level 5</div>
+            </div>
+          </div>
+
+          <!-- Next Branch -->
+          <div class="w-12 h-0.5 bg-slate-700"></div>
+
+          <!-- Advanced Node -->
+          <div class="p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 opacity-40 flex flex-col items-center text-center w-44">
+            <div class="w-10 h-10 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center font-bold text-sm mb-2">⭐</div>
+            <div class="text-xs font-bold text-slate-400">ฟิสิกส์ควอนตัม</div>
+            <div class="text-[10px] text-slate-500 mt-1">End-game Node</div>
+          </div>
+        </div>
+
+        <div class="absolute bottom-3 right-4 text-xs text-slate-500 bg-slate-900/80 px-3 py-1 rounded-lg border border-white/5">
+          XYFlow Engine · Pan & Zoom Supported
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TAB 5: REAL SCREENSHOTS VIEW -->
+    <div id="view-realshots" class="hidden space-y-6">
+      <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-4">
+        <div class="text-2xl mt-0.5">📸</div>
+        <div>
+          <h2 class="font-bold text-white text-base">ภาพแคปจากระบบของจริง (Real-World Screenshots & Demos)</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            ภาพแคปจริงจาก GitHub Repositories และ Live Apps ที่ทีมงานได้ดึงมาเก็บไว้ในเครื่อง เพื่อให้ท่านประธาน (CEO) ได้เทียบภาพอย่างชัดเจน 100%
+          </p>
+        </div>
+      </div>
+
+      <!-- Screenshots Gallery Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Duolingo Clone Main Screen -->
+        <div class="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="p-3 bg-slate-800/80 border-b border-white/5 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">1. Duolingo Clone (Lingo) — แผนผังเส้นทางงู & ด่าน</span>
+            <span class="text-[11px] text-emerald-400">sanidhyy/duolingo-clone</span>
+          </div>
+          <img src="preview-assets/duolingo-main.png" alt="Duolingo Road" class="w-full h-auto object-cover">
+        </div>
+
+        <!-- Duolingo Clone Lesson Quiz Screen -->
+        <div class="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="p-3 bg-slate-800/80 border-b border-white/5 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">2. Duolingo Lesson UI — Challenge Card & Bottom Sheet</span>
+            <span class="text-[11px] text-emerald-400">Interactive Quiz</span>
+          </div>
+          <img src="preview-assets/duolingo-lesson.png" alt="Duolingo Lesson" class="w-full h-auto object-cover">
+        </div>
+
+        <!-- Brilliant.org Interactive Problem Card -->
+        <div class="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="p-3 bg-slate-800/80 border-b border-white/5 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">3. Brilliant.org — First-Principles Problem Card</span>
+            <span class="text-[11px] text-amber-400">Brilliant.org Official</span>
+          </div>
+          <img src="preview-assets/brilliant-problem-card.png" alt="Brilliant Problem Card" class="w-full h-auto object-cover">
+        </div>
+
+        <!-- Brilliant.org Visual Interactive Slider -->
+        <div class="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="p-3 bg-slate-800/80 border-b border-white/5 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">4. Brilliant.org — Visual Interactive Simulation</span>
+            <span class="text-[11px] text-amber-400">Interactive Physics</span>
+          </div>
+          <img src="preview-assets/brilliant-interactive-slider.png" alt="Brilliant Slider" class="w-full h-auto object-cover">
+        </div>
+
+        <!-- SkilLet React Flow Tree View -->
+        <div class="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl md:col-span-2">
+          <div class="p-3 bg-slate-800/80 border-b border-white/5 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">5. SkilLet — RPG Skill Tree with Directed Graph (React Flow)</span>
+            <span class="text-[11px] text-purple-400">Ilyat9/SkilLet (@xyflow/react)</span>
+          </div>
+          <img src="preview-assets/skillet-tree-view.png" alt="SkilLet Tree" class="w-full h-auto object-cover">
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Tab Switching
+    function switchTab(tabId) {
+      const views = ['hybrid', 'duolingo', 'brilliant', 'skilltree', 'realshots'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        const btn = document.getElementById('tab-btn-' + v);
+        if (v === tabId) {
+          el.classList.remove('hidden');
+          el.classList.add('block');
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm";
+        } else {
+          el.classList.remove('block');
+          el.classList.add('hidden');
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white";
+        }
+      });
+      if (tabId === 'brilliant') {
+        startPendulumAnimation();
+      }
+    }
+
+    // Audio Chime (Web Audio API)
+    function playDuoSound(correct) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (correct) {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+          osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        } else {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, ctx.currentTime);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+        }
+      } catch (e) {
+        console.log('Audio disabled:', e);
+      }
+    }
+
+    // Hybrid Choice Logic
+    function selectHybridOption(optIndex, isCorrect) {
+      const container = document.getElementById('hybrid-options');
+      const buttons = container.querySelectorAll('button');
+      buttons.forEach((btn, idx) => {
+        btn.classList.remove('btn-card-selected');
+        if (idx === optIndex - 1) {
+          btn.classList.add('btn-card-selected');
+        }
+      });
+
+      playDuoSound(isCorrect);
+
+      const feedback = document.getElementById('hybrid-feedback');
+      feedback.classList.remove('hidden');
+
+      if (isCorrect) {
+        // Glow target node in mini graph
+        const targetBadge = document.getElementById('target-prop-badge');
+        targetBadge.className = "text-[11px] p-2 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold animate-pulse";
+        targetBadge.innerHTML = "✨ <b>PROVEN:</b> <code>n_period</code> ได้รับการบันทึกลง KGLite แล้ว!";
+      }
+    }
+
+    function nextHybridStep() {
+      alert("🎉 ยอดเยี่ยม! ระบบ Socratic Engine ได้บันทึกข้อสรุปนี้ลงใน KGLite เรียบร้อย และพร้อมพาเข้าสู่ Step ถัดไป!");
+    }
+
+    // Brilliant Pendulum Canvas Simulator
+    let pendulumRunning = false;
+    let angle = Math.PI / 4;
+    let aVelocity = 0.0;
+    let aAcceleration = 0.0;
+    let length = 1.0;
+    let gravity = 9.8;
+
+    function updatePendulum() {
+      length = parseFloat(document.getElementById('len-slider').value);
+      gravity = parseFloat(document.getElementById('g-slider').value);
+      document.getElementById('len-val').innerText = length.toFixed(1);
+      document.getElementById('g-val').innerText = gravity.toFixed(1);
+
+      const period = 2 * Math.PI * Math.sqrt(length / gravity);
+      document.getElementById('period-display').innerText = period.toFixed(2) + ' วินาที';
+    }
+
+    function startPendulumAnimation() {
+      if (pendulumRunning) return;
+      pendulumRunning = true;
+      const canvas = document.getElementById('pendulumCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const originX = canvas.width / 2;
+      const originY = 30;
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Physics update
+        const armLength = length * 50; // scale
+        aAcceleration = (-1 * (gravity / 15) / armLength) * Math.sin(angle);
+        aVelocity += aAcceleration;
+        aVelocity *= 0.995; // damping
+        angle += aVelocity;
+
+        const bobX = originX + armLength * Math.sin(angle);
+        const bobY = originY + armLength * Math.cos(angle);
+
+        // Draw string
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(bobX, bobY);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw pivot
+        ctx.beginPath();
+        ctx.arc(originX, originY, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#64748b';
+        ctx.fill();
+
+        // Draw bob
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, 14, 0, Math.PI * 2);
+        ctx.fillStyle = '#f59e0b';
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+  </script>
+</body>
+</html>
