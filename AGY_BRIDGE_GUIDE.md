@@ -108,39 +108,19 @@ providers:
 
 ---
 
-### 5.2 การเชื่อมต่อใน LearnHarness (2 รูปแบบ)
+### 5.2 การเชื่อมต่อใน LearnHarness (เชื่อมต่อสำเร็จแล้วแบบ Native ✅)
 
-#### รูปแบบที่ 1: Native Provider ในโค้ด LearnHarness (แนะนำสำหรับระยะยาว)
-เพิ่มการลงทะเบียน Provider `agy` ลงใน `src/agent/models.ts`:
-```typescript
-import { createProvider } from "@earendil-works/pi-ai";
-import { openAIResponsesApi } from "@earendil-works/pi-ai/dist/api/openai-responses.lazy.js";
-
-// ลงทะเบียน Provider Antigravity Local Bridge
-const agyProvider = createProvider({
-    id: "agy",
-    name: "Antigravity Bridge (Local)",
-    baseUrl: "http://127.0.0.1:8000/v1",
-    auth: {
-        apiKey: {
-            name: "Antigravity Bridge Key",
-            login: async () => ({ type: "api_key", key: "agy-bridge" }),
-            resolve: async () => ({ auth: { apiKey: "agy-bridge" }, source: "default" })
-        }
-    },
-    models: [
-        // ระบุ ID โมเดลเช่น gemini-3.8-flash, gemini-3.7-flash-medium, claude-sonnet-4.6
-    ],
-    api: openAIResponsesApi()
-});
-```
-
-#### รูปแบบที่ 2: รีดายเรกต์ OpenAI Provider ชี้มาที่ Bridge
-ใน [src/agent/models.ts](file:///d:/Learnharness%20(%E0%B9%82%E0%B8%AA%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B9%8pro%E0%B9%81%E0%B8%81%E0%B8%A3%E0%B8%a1)/src/agent/models.ts) กำหนดให้ `openai` provider ใช้ Base URL:
-`http://127.0.0.1:8000/v1`
-จากนั้นในหน้าจอ Settings ของ LearnHarness กรอกช่อง OpenAI API Key ด้วยคำว่า:
-`agy-bridge`
-ระบบจะดึงโมเดลผ่าน Antigravity ทันที
+LearnHarness ได้รับการเชื่อมต่อกับ Antigravity Bridge เรียบร้อยแล้วผ่าน Native Bridge Module:
+* **ไฟล์โมดูลบริดจ์:** [`src/agent/antigravity-bridge.ts`](file:///d:/Learnharness%20(%E0%B9%82%E0%B8%AA%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B9%8pro%E0%B9%81%E0%B8%81%E0%B8%A3%E0%B8%a1)/src/agent/antigravity-bridge.ts)
+* **การลงทะเบียนในระบบ:** บูรณาการเข้ากับ [`src/server/model-catalog.ts`](file:///d:/Learnharness%20(%E0%B9%82%E0%B8%AA%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B9%8pro%E0%B9%81%E0%B8%81%E0%B8%A3%E0%B8%a1)/src/server/model-catalog.ts) และ [`src/agent/models.ts`](file:///d:/Learnharness%20(%E0%B9%82%E0%B8%AA%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%AA%E0%B9%8pro%E0%B9%81%E0%B8%81%E0%B8%A3%E0%B8%a1)/src/agent/models.ts)
+* **สถานะปัจจุบัน:**
+  * Provider `antigravity` เปิดใช้งานอยู่ตลอดเวลา (`keyPresent: true`)
+  * โควตาและค่าใช้จ่ายในระบบขึ้น `$0.00` (Free Antigravity Quota)
+  * ค่าเริ่มต้นใน `data/settings.json`:
+    * **Strong Slot (Teacher/Prober):** `gemini-3.7-flash-medium` (Thinking: medium)
+    * **Cheap Slot (Background Agents):** `gemini-3.7-flash`
+    * **Vision Slot (Diagrams/Images):** `gemini-3.7-flash`
+  * สามารถสลับไปใช้ `gemini-3.8-flash-high` หรือ `claude-sonnet-4.6-thinking` ได้ตลอดเวลาผ่านหน้า Settings ของ LearnHarness
 
 ---
 

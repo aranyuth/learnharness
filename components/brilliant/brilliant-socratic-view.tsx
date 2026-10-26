@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { BrilliantChallengeCard } from "./brilliant-challenge-card";
 import { InteractiveSimulationCard } from "./interactive-simulation-card";
 import { ConceptRoadmapRail } from "./concept-roadmap-rail";
@@ -134,23 +134,23 @@ export function BrilliantSocraticView() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
-      {/* Top Header Bar */}
-      <header className="h-16 border-b border-white/10 bg-[#0f172a]/80 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+    <div className="w-full min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+      {/* Top Header Bar - Authentic Brilliant.org Clean White Aesthetic */}
+      <header className="h-16 border-b border-slate-200/90 bg-white/95 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+        <div className="flex items-center gap-3.5">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm">
             <span className="text-white text-base font-bold">⚡</span>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm sm:text-base text-white">
+              <span className="font-bold text-sm sm:text-base text-slate-900">
                 วิชา: กลศาสตร์และลูกตุ้มอย่างง่าย
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 Phase: Teach (โสเครติส)
               </span>
             </div>
-            <div className="text-[11px] text-slate-400">
+            <div className="text-[11px] text-slate-500 font-medium">
               KGLite Engine · Step {activeChallenge.stepNumber} of {activeChallenge.totalSteps}
             </div>
           </div>
@@ -158,13 +158,13 @@ export function BrilliantSocraticView() {
 
         {/* View Mode Switcher + Streak Badges */}
         <div className="flex items-center gap-3">
-          <div className="flex p-1 rounded-xl bg-slate-900 border border-white/10">
+          <div className="flex p-1 rounded-xl bg-slate-100 border border-slate-200/80">
             <button
               onClick={() => setViewMode("card")}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === "card"
-                  ? "bg-blue-600 text-white shadow"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               ⭐ Brilliant Card
@@ -173,16 +173,16 @@ export function BrilliantSocraticView() {
               onClick={() => setViewMode("chat")}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === "chat"
-                  ? "bg-blue-600 text-white shadow"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               💬 Timeline Chat
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-800/80 border border-white/5">
-            <span className="text-amber-400 font-bold">🔥 7 วัน</span> Streak
+          <div className="hidden md:flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-900 border border-amber-200">
+            <span className="text-amber-600">🔥 7 วัน</span> Streak
           </div>
         </div>
       </header>
@@ -208,8 +208,8 @@ export function BrilliantSocraticView() {
                   onClick={() => setActiveTabCenter("card")}
                   className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     activeTabCenter === "card"
-                      ? "bg-slate-800 text-white border border-white/10"
-                      : "text-slate-400 hover:text-white"
+                      ? "bg-white text-slate-900 border border-slate-200 shadow-sm"
+                      : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
                   🎯 การ์ดโจทย์ (Challenge)
@@ -218,8 +218,8 @@ export function BrilliantSocraticView() {
                   onClick={() => setActiveTabCenter("simulator")}
                   className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     activeTabCenter === "simulator"
-                      ? "bg-slate-800 text-amber-400 border border-amber-500/20"
-                      : "text-slate-400 hover:text-white"
+                      ? "bg-white text-amber-700 border border-amber-200 shadow-sm"
+                      : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
                   🧪 ตัวจำลองฟิสิกส์ (Simulator)
@@ -241,9 +241,9 @@ export function BrilliantSocraticView() {
               )}
             </>
           ) : (
-            /* Timeline Chat View */
-            <div className="w-full bg-[#111827] border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[600px] overflow-y-auto">
-              <div className="text-xs font-bold text-slate-400 pb-2 border-b border-white/5 uppercase">
+            /* Timeline Chat View - Clean Crisp Light Design */
+            <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.03)] space-y-4 max-h-[600px] overflow-y-auto">
+              <div className="text-xs font-bold text-slate-500 pb-2 border-b border-slate-100 uppercase tracking-wider">
                 บทสนทนาโสเครติส (Timeline Chat Stream)
               </div>
               {messages.map((m) => (
@@ -256,13 +256,13 @@ export function BrilliantSocraticView() {
                   <div
                     className={`max-w-[85%] p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                       m.sender === "user"
-                        ? "bg-blue-600 text-white rounded-tr-none"
-                        : "bg-slate-800 border border-white/5 text-slate-200 rounded-tl-none"
+                        ? "bg-blue-600 text-white rounded-tr-none shadow-sm"
+                        : "bg-slate-100 border border-slate-200/80 text-slate-800 rounded-tl-none"
                     }`}
                   >
                     {m.text}
                   </div>
-                  <span className="text-[10px] text-slate-500 mt-1 px-1">
+                  <span className="text-[10px] text-slate-400 mt-1 px-1">
                     {m.timestamp}
                   </span>
                 </div>
